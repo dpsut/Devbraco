@@ -1,8 +1,5 @@
 # Phase 0: what exists today
 
-A walkthrough of the working slice, for the CTPO and architects. Less detail than
-[IMPLEMENTATION.md](IMPLEMENTATION.md), more than [OBJECTIVE.md](OBJECTIVE.md).
-
 The short version: there is a running multi-step journey, driven by one shared codebase, with wording
 editable in a CMS and no client-specific code anywhere. It is about 1,400 lines of application code. A
 developer clones the repository, runs one command, and completes a journey in the browser without
