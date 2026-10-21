@@ -7,30 +7,33 @@ namespace Devbraco.Web.Journeys;
 
 public sealed class JourneyController : Controller
 {
+    private readonly IJourneyCatalog _catalog;
     private readonly IJourneyCopyProvider _copy;
     private readonly ICopyTrace _trace;
     private readonly IWizardStateStore _stateStore;
-    private readonly IRenewalClient _renewals;
+    private readonly IEnumerable<IJourneySubmissionHandler> _handlers;
     private readonly IWebHostEnvironment _environment;
 
     public JourneyController(
+        IJourneyCatalog catalog,
         IJourneyCopyProvider copy,
         ICopyTrace trace,
         IWizardStateStore stateStore,
-        IRenewalClient renewals,
+        IEnumerable<IJourneySubmissionHandler> handlers,
         IWebHostEnvironment environment)
     {
+        _catalog = catalog;
         _copy = copy;
         _trace = trace;
         _stateStore = stateStore;
-        _renewals = renewals;
+        _handlers = handlers;
         _environment = environment;
     }
 
     [HttpGet("/go/{journeySlug}")]
     public async Task<IActionResult> Start(string journeySlug)
     {
-        var journey = JourneyCatalog.Find(journeySlug);
+        var journey = _catalog.Find(journeySlug);
         if (journey is null)
         {
             return NotFound();
@@ -45,7 +48,7 @@ public sealed class JourneyController : Controller
     [HttpGet("/go/{journeySlug}/{stepSlug}")]
     public async Task<IActionResult> Step(string journeySlug, string stepSlug)
     {
-        var journey = JourneyCatalog.Find(journeySlug);
+        var journey = _catalog.Find(journeySlug);
         if (journey is null)
         {
             return NotFound();
@@ -77,7 +80,7 @@ public sealed class JourneyController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Step(string journeySlug, string stepSlug, IFormCollection form)
     {
-        var journey = JourneyCatalog.Find(journeySlug);
+        var journey = _catalog.Find(journeySlug);
         if (journey is null)
         {
             return NotFound();
@@ -127,9 +130,15 @@ public sealed class JourneyController : Controller
             return RedirectToAction(nameof(Step), new { journeySlug, stepSlug = steps[requested + 1].Slug });
         }
 
-        var context = ContextFor(state);
-        var submission = RenewalMapper.Map(state.Answers, context);
-        var confirmation = await _renewals.SubmitAsync(submission, state.IdempotencyKey, HttpContext.RequestAborted);
+        var handler = _handlers.FirstOrDefault(candidate =>
+                candidate.JourneySlug.Equals(journey.Slug, StringComparison.OrdinalIgnoreCase))
+            ?? throw new InvalidOperationException($"No submission handler is registered for '{journey.Slug}'.");
+
+        var confirmation = await handler.SubmitAsync(
+            state.Answers,
+            ContextFor(state),
+            state.IdempotencyKey,
+            HttpContext.RequestAborted);
         await _stateStore.ClearAsync();
         return RedirectToAction(nameof(Done), new { journeySlug, id = confirmation });
     }
@@ -137,7 +146,7 @@ public sealed class JourneyController : Controller
     [HttpGet("/go/{journeySlug}/done")]
     public IActionResult Done(string journeySlug, string id)
     {
-        if (JourneyCatalog.Find(journeySlug) is null || string.IsNullOrWhiteSpace(id))
+        if (_catalog.Find(journeySlug) is null || string.IsNullOrWhiteSpace(id))
         {
             return NotFound();
         }

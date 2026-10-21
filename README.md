@@ -2,6 +2,10 @@
 
 Phase 0 slice: one renewal journey rendered by Razor, with copy stored in Umbraco and a local API stub.
 
+[OBJECTIVE.md](OBJECTIVE.md) explains why Devbraco exists and the phased plan.
+[phase0.md](phase0.md) walks through what exists today and what it proves.
+[IMPLEMENTATION.md](IMPLEMENTATION.md) explains how the code fits together and how to change it.
+
 ## Run
 
 ```bash

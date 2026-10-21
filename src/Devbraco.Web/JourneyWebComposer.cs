@@ -1,4 +1,5 @@
 using Devbraco.Journeys;
+using Devbraco.Journeys.Membership;
 using Devbraco.Web.Journeys;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Umbraco.Cms.Core.Composing;
@@ -13,6 +14,10 @@ public sealed class JourneyWebComposer : IComposer
         builder.Services.AddDistributedMemoryCache();
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddScoped<IWizardStateStore, WizardStateStore>();
+
+        // The host chooses which journeys it runs and what their outcomes talk to.
+        builder.Services.AddSingleton<IJourneyCatalog, MembershipJourneys>();
+        builder.Services.AddScoped<IJourneySubmissionHandler, RenewalSubmissionHandler>();
         builder.Services.AddSingleton<RenewalSubmissionStore>();
         builder.Services.AddScoped<IRenewalClient, LocalRenewalClient>();
         builder.Services.AddAuthentication().AddCookie(DevMember.Scheme, options =>

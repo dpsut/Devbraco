@@ -1,4 +1,4 @@
-namespace Devbraco.Journeys;
+namespace Devbraco.Journeys.Membership;
 
 /// <summary>
 /// Sample journey for Phase 0. Payment is not collected here: card data never enters the catalogue.

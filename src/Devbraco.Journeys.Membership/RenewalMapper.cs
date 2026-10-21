@@ -1,4 +1,4 @@
-namespace Devbraco.Journeys;
+namespace Devbraco.Journeys.Membership;
 
 public sealed class RenewalSubmission
 {

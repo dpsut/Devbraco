@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Devbraco.Journeys\Devbraco.Journeys.csproj" />
+    <ProjectReference Include="..\..\src\Devbraco.Journeys.Membership\Devbraco.Journeys.Membership.csproj" />
   </ItemGroup>
 
 </Project>

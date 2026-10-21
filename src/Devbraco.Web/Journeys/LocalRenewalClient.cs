@@ -1,12 +1,7 @@
 using System.Collections.Concurrent;
-using Devbraco.Journeys;
+using Devbraco.Journeys.Membership;
 
 namespace Devbraco.Web.Journeys;
-
-public interface IRenewalClient
-{
-    Task<string> SubmitAsync(RenewalSubmission submission, string idempotencyKey, CancellationToken cancellationToken);
-}
 
 /// <summary>
 /// Development stand-in for the external API. The same store backs the HTTP stub.

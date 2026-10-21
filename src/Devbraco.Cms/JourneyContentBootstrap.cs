@@ -21,6 +21,7 @@ public sealed class JourneyContentBootstrap : INotificationHandler<UmbracoApplic
     public const string CopyEntryAlias = "copyEntry";
     public const string StepCopyAlias = "stepCopy";
 
+    private readonly IJourneyCatalog _catalog;
     private readonly ICoreScopeProvider _scopeProvider;
     private readonly IContentTypeService _contentTypeService;
     private readonly IContentService _contentService;
@@ -29,6 +30,7 @@ public sealed class JourneyContentBootstrap : INotificationHandler<UmbracoApplic
     private readonly ILogger<JourneyContentBootstrap> _logger;
 
     public JourneyContentBootstrap(
+        IJourneyCatalog catalog,
         ICoreScopeProvider scopeProvider,
         IContentTypeService contentTypeService,
         IContentService contentService,
@@ -36,6 +38,7 @@ public sealed class JourneyContentBootstrap : INotificationHandler<UmbracoApplic
         IShortStringHelper shortStringHelper,
         ILogger<JourneyContentBootstrap> logger)
     {
+        _catalog = catalog;
         _scopeProvider = scopeProvider;
         _contentTypeService = contentTypeService;
         _contentService = contentService;
@@ -149,7 +152,7 @@ public sealed class JourneyContentBootstrap : INotificationHandler<UmbracoApplic
     {
         var root = EnsureNode(StableGuid.For("journeys-root"), "Journeys", RootAlias, parentKey: null, values: null);
 
-        foreach (var journey in JourneyCatalog.All)
+        foreach (var journey in _catalog.Journeys)
         {
             var journeyNode = EnsureNode(
                 StableGuid.For(journey.CopyKey),

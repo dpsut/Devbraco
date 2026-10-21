@@ -2,6 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/Devbraco.Cms/Devbraco.Cms.csproj" />
     <Project Path="src/Devbraco.Journeys/Devbraco.Journeys.csproj" />
+    <Project Path="src/Devbraco.Journeys.Membership/Devbraco.Journeys.Membership.csproj" />
     <Project Path="src/Devbraco.Web/Devbraco.Web.csproj" />
   </Folder>
   <Folder Name="/tests/">

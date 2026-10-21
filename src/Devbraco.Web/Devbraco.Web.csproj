@@ -46,6 +46,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Devbraco.Cms\Devbraco.Cms.csproj" />
     <ProjectReference Include="..\Devbraco.Journeys\Devbraco.Journeys.csproj" />
+    <ProjectReference Include="..\Devbraco.Journeys.Membership\Devbraco.Journeys.Membership.csproj" />
   </ItemGroup>
 
 
