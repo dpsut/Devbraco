@@ -1,0 +1,46 @@
+@model Devbraco.Web.Journeys.JourneyStepViewModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = Model.StepTitle;
+}
+<p class="progress">@Model.JourneyTitle · Step @Model.StepNumber of @Model.StepCount</p>
+<h1>@Model.StepTitle</h1>
+@if (!string.IsNullOrWhiteSpace(Model.Intro))
+{
+    <p class="intro">@Model.Intro</p>
+}
+<form method="post" action="/go/@Model.JourneySlug/@Model.StepSlug">
+    @Html.AntiForgeryToken()
+    @foreach (var field in Model.Fields)
+    {
+        <div class="field">
+            <label for="@field.Key">@field.Label</label>
+            <input id="@field.Key"
+                   name="@field.Key"
+                   type="@(field.Type == Devbraco.Journeys.FieldType.Date ? "date" : field.Type == Devbraco.Journeys.FieldType.Email ? "email" : "text")"
+                   value="@field.Value"
+                   placeholder="@field.Placeholder"
+                   autocomplete="@(field.Sensitive ? "off" : null)"
+                   @(field.Error is null ? null : "aria-invalid=true") />
+            @if (!string.IsNullOrWhiteSpace(field.Help))
+            {
+                <p class="help">@field.Help</p>
+            }
+            @if (!string.IsNullOrWhiteSpace(field.Error))
+            {
+                <p class="error">@field.Error</p>
+            }
+        </div>
+    }
+    <button type="submit">@(Model.StepNumber == Model.StepCount ? "Submit renewal" : "Continue")</button>
+</form>
+@if (Model.Semantics.Count > 0 || Model.FallbackKeys.Count > 0)
+{
+    <aside class="toolbar">
+        <p>Development member: @string.Join(", ", Model.Semantics). Switch with <a href="/dev/member?semantics=IsActive,CanRenew&amp;returnUrl=/go/@Model.JourneySlug">active</a> or <a href="/dev/member?semantics=IsLapsed,RequiresPaymentPrompt&amp;returnUrl=/go/@Model.JourneySlug">lapsed</a>.</p>
+        @if (Model.FallbackKeys.Count > 0)
+        {
+            <p>Copy falling back to code defaults: @string.Join(", ", Model.FallbackKeys).</p>
+        }
+    </aside>
+}
